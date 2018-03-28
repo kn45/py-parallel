@@ -21,6 +21,7 @@ def consume():
                 print >> out_file, item
     out_file.close()
 
+
 out_queue = Queue()
 
 if __name__ == '__main__':
