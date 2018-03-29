@@ -4,9 +4,11 @@ import time
 from multiprocessing import Pool, Queue, Process
 
 
-def foo(inp):
-    out_queue.put('foo_' + str(inp))
+def foo1(pref, inp):
+    out_queue.put(pref + str(inp))
 
+def foo2(inp):
+    out_queue.put('foo2' + str(inp)) 
 
 def consume():
     out_file = open('./output_sample', 'w')
@@ -22,15 +24,24 @@ def consume():
     out_file.close()
 
 
+class GlobalVar(object):
+    def __init__(self):
+        self.pref = 'foo'
+
+
 out_queue = Queue()
 
 if __name__ == '__main__':
-    p_output = Process(target=consume, args=())
+    p_output = Process(target=consume)
     p_output.start()  # start flush
+    gv = GlobalVar()
 
-    data = xrange(10000)
+    data = xrange(100)
     my_pool = Pool(processes=4)
-    my_pool.imap(foo, data, chunksize=10)  # start produce
+    for d in data:
+        my_pool.apply_async(foo1, args=(gv.pref, d))
+    # my_pool.imap(foo2, data, chunksize=10)  # start produce
+    # my_pool.imap(lambda x: foo1(gv.pref, x), data, chunksize=10)  # not work
 
     my_pool.close()
     my_pool.join()
