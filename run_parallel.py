@@ -5,10 +5,17 @@ from multiprocessing import Pool, Queue, Process
 
 
 def foo1(pref, inp):
+    inp = foo(inp)
     out_queue.put(pref + str(inp))
 
+
 def foo2(inp):
-    out_queue.put('foo2' + str(inp)) 
+    out_queue.put('foo2' + str(inp))
+
+
+def foo(d):
+    return 'foo' + str(d)
+
 
 def consume():
     out_file = open('./output_sample', 'w')
@@ -26,7 +33,7 @@ def consume():
 
 class GlobalVar(object):
     def __init__(self):
-        self.pref = 'foo'
+        self.pref = 'GlobalVar'
 
 
 out_queue = Queue()
